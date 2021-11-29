@@ -1,10 +1,5 @@
 <h1 align="center"> Lucky Number</h1> <br>
 
-<p align="center">
-  Sample microservice description.
-</p>
-
-
 ## Table of Contents
 
 - [Introduction](#introduction)
