@@ -1,6 +1,4 @@
 # lucky-number
-# Java Adapter Example
-
 ## Overview
 The following repo contains examples for OpenFin's Java adapter.
 
