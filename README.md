@@ -1,177 +1,99 @@
-# lucky-number
-## Overview
-The following repo contains examples for OpenFin's Java adapter.
+<h1 align="center"> Lucky Number</h1> <br>
 
-## Guidelines
-Run the example of connecting to OpenFin and creating applications
+<p align="center">
+  Sample microservice description.
+</p>
 
-1. Clone this repository
 
-2. Go to release directory and start run.bat
+## Table of Contents
 
-3. Once the java app starts, click on Start button, which should start OpenFin Runtime.  The java app will wait and try to connect to OpenFin Runtime.
+- [Introduction](#introduction)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [Testing](#testing)
+- [API](#requirements)
+- [Acknowledgements](#acknowledgements)
 
-4. Once OpenFin Runtime is started and Java app connects successfully,  "Create Application" button is enabled.  You can click on the button to bring up a dialog for entering configuration of any HTML5 app.  By default, the dialog is pre-populated with configuration for Hello OpenFin demo app.
 
-5. You can use buttons in Window Control section to move and re-size HTML5 window of Hello OpenFin app.
 
-6. Click "Create Application" button, which should start a dialog with all the fields pre-populated for our Hello OpenFin demo HTML5 application.  Just click on "Create" button.
 
-7. After Hello OpenFin starts, you can use the buttons under Window Control of Java app to control Hello OpenFin window.
+## Introduction
 
-## Source Code Review
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e91606af4a364076a7058c5ea1c006a8)](https://www.codacy.com/app/joneubank/microservice-template-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=overture-stack/microservice-template-java&amp;utm_campaign=Badge_Grade)
+[![CircleCI](https://circleci.com/gh/overture-stack/microservice-template-java/tree/master.svg?style=shield)](https://circleci.com/gh/overture-stack/microservice-template-java/tree/master)
 
-Source code for the example is located in /src/main/java/com/openfin/desktop/demo/OpenFinDesktopDemo.java.  The followings overview of how it communicates with OpenFin Runtime with API calls supported by the Java adapter:
+TODO: Replace with introduction
 
-1. Create connection object:
+## Features
+TODO: Description of features
 
-```java
-	this.desktopConnection = new DesktopConnection("OpenFinDesktopDemo");
-```
-   This code just creates an instance of DesktopConnection and it does not try to connect to runtime.
+* Include a list of
+* all the many beautiful
+* web server features
 
-2. Launch and connect to stable version of OpenFin runtime:
 
-```java
-	// create an instance of RuntimeConfiguration and configure Runtime by setting properties in RuntimeConfiguration
-	this.runtimeConfiguration = new RuntimeConfiguration();
-	// launch and connect to OpenFin Runtime
-	desktopConnection.connect(this.runtimeConfiguration, listener, 10000);
-```
-   listener is an instance of DesktopStateListener which provides callback on status of connections to runtime.
+## Requirements
+The application can be run locally or in a docker container, the requirements for each setup are listed below.
 
-3. Create new application when clicking on Create App:
 
- ```java
-	Application app = new Application(options, desktopConnection, new AckListener() {
-		@Override
-		public void onSuccess(Ack ack) {
-			Application application = (Application) ack.getSource();
-			application.run();   // run the app
-		}
-		@Override
-		public void onError(Ack ack) {
-		}
-	});
-```
-   options is an instance of ApplicationOptions, which is populated from App Create dialog.  AckListener interface provides callback for the operation.
+### EGO
+A running instance of [EGO](https://github.com/overture-stack/ego/) is required to generate the Authorization tokens and to provide the verification key.
 
-   Once the application is created successfully, you can take actions on its window:
+[EGO](https://github.com/overture-stack/ego/) can be cloned and run locally if no public server is available. 
 
-4.  Change opacity:
 
-```java
-	WindowOptions options = new WindowOptions();
-	options.setOpacity(newOpacityValue);
-	application.getWindow().updateOptions(options, null);
-```
+### Local
+* [Java 8 SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Maven](https://maven.apache.org/download.cgi)
 
-5. Change Window size
 
-```java
-	application.getWindow().resizeBy(10, 10, "top-left");
+### Docker
+* [Docker](https://www.docker.com/get-docker)
+
+
+## Quick Start
+Make sure the JWT Verification Key URL is configured, then you can run the server in a docker container or on your local machine.
+
+### Configure JWT Verification Key
+Update __application.yml__. Set `auth.jwt.publicKeyUrl` to the URL to fetch the JWT verification key. The application will not start if it can't set the verification key for the JWTConverter.
+
+The default value in the __application.yml__ file is set to connect to EGO running locally on its default port `8081`.
+
+### Run Local
+```bash
+$ mvn spring-boot:run
 ```
 
-6. Publishes messages to a topic with InterApplicationBus
+Application will run by default on port `1234`
 
-```java
-	org.json.JSONObject message = createSomeJsonMessage();
-	desktopConnection.getInterApplicationBus().publish("someTopic", message);
+Configure the port by changing `server.port` in __application.yml__
+
+
+### Run Docker
+
+First build the image:
+```bash
+$ docker-compose build
 ```
 
-7. Subscribes to a topic with InterApplicationBus
-
-```java
-	desktopConnection.getInterApplicationBus().subscribe("*", "someTopic", new BusListener() {
-		public void onMessageReceived(String sourceUuid, String topic, Object payload) {
-			JSONObject message = (JSONObject) payload;
-		}
-	});
+When ready, run it:
+```bash
+$ docker-compose up
 ```
 
-## Run the example of embedding HTML5 application into a Java Swing window
+Application will run by default on port `1234`
 
-1. Clone this repository
+Configure the port by changing `services.api.ports` in __docker-compose.yml__. Port 1234 was used by default so the value is easy to identify and change in the configuration file.
 
-2. Go to release directory and start embed.bat ( the default embedded url is https://openfin.co. Pass the url you wish to load if you want something different e.g. embed.bat https://www.mydomain.com )
 
-3. Once the java app starts, click on "Launch OpenFin" button, which should start OpenFin Runtime and embed the OpenFin application that points to https://openfin.co (or your custom url if you specified one)
+## Testing
+TODO: Additional instructions for testing the application.
 
-4. Click "Shutdown OpenFin" button to close HTML5 application and the Java Swing window
 
-If there is a problem rendering the url please check your windows display settings to see ensure scaling is set to 100%.
+## API
+TODO: API Reference with examples, or a link to a wiki or other documentation source.
 
-## Source Code Review for embedded OpenFin application
-
-Source code for the example is located in /src/main/java/com/openfin/desktop/demo/WindowEmbedDemo.java
-
-1. create a canvas and place it where the HTML5 application should be embedded.
-
-```java
-	embedCanvas = new java.awt.Canvas();
-	panel.add(embedCanvas, BorderLayout.CENTER);
-```
-
-2. listen to the canvas resize event, and resize embedded HTML5 application accordingly.
-
-```java
-	embedCanvas.addComponentListener(new ComponentAdapter() {
-	    @Override
-	    public void componentResized(ComponentEvent event) {
-	        super.componentResized(event);
-	        Dimension newSize = event.getComponent().getSize();
-	        try {
-	            if (startupHtml5app != null) {
-	                startupHtml5app.getWindow().embedComponentSizeChange((int)newSize.getWidth(), (int)newSize.getHeight());
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
-	});
-```
-
-3. launch and connect to OpenFin runtime 
-
-```java
-	this.desktopConnection = new DesktopConnection(appUuid);
-	DesktopStateListener listener = new DesktopStateListener() {...};
-	RuntimeConfiguration configuration = new RuntimeConfiguration();
-	configuration.setRuntimeVersion(desktopVersion);
-	desktopConnection.connect(configuration, listener, 60);
-```
-
-4. create HTML5 application
-
-```java
-	ApplicationOptions options = new ApplicationOptions(startupUuid, startupUuid, openfin_app_url);
-	WindowOptions mainWindowOptions = new WindowOptions();
-	options.setMainWindowOptions(mainWindowOptions);
-	DemoUtils.runApplication(options, this.desktopConnection, new AckListener() {...});
-```
-
-5. embed HTML5 application into the canvas
-
-```java
-	startupHtml5app = Application.wrap(this.startupUuid, this.desktopConnection);
-	Window html5Wnd = startupHtml5app.getWindow();
-	long parentHWndId = Native.getComponentID(this.embedCanvas);
-	html5Wnd.embedInto(parentHWndId, this.embedCanvas.getWidth(), this.embedCanvas.getHeight(), new AckListener() {...});
-```
-
-## More Info
-More information and API documentation can be found at https://openfin.co/java-api/
-
-## Disclaimers
-* This is a starter example and intended to demonstrate to app providers a sample of how to approach an implementation. There are potentially other ways to approach it and alternatives could be considered. 
-* Its possible that the repo is not actively maintained.
-
-## License
-MIT
-
-The code in this repository is covered by the included license.
-
-However, if you run this code, it may call on the OpenFin RVM or OpenFin Runtime, which are covered by OpenFin’s Developer, Community, and Enterprise licenses. You can learn more about OpenFin licensing at the links listed below or just email us at support@openfin.co with questions.
-
-https://openfin.co/developer-agreement/ <br/>
-https://openfin.co/licensing/
+## Acknowledgements
+TODO: Show folks some love.
